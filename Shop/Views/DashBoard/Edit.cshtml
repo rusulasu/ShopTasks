@@ -22,7 +22,7 @@
                            class="form-control"
                            value="@Model.Name" 
                     placeholder="" />
-                    <!-- Pre-populate the input field with the existing value from the database -->
+              
                 </div>
                 <div class="mb-3">
                     <label asp-for="Description" class="form-label">Product Description</label>
@@ -62,17 +62,17 @@
                 </div>
 
                 <div class="mb-3 col-lg-6">
-                    <label asp-for="company.Id" class="form-label">Company</label>
-                    <select class="form-select" asp-for="company.Id">
+                    <label asp-for="CompanyId" class="form-label">Company</label>
+                    <select class="form-select" asp-for="CompanyId">
                         @if (Model.company != null)
                         {
-                            if (Model.company.Id == 1) //Nike
+                            if (Model.CompanyId == 1)
                             {
                                 <option>Select one</option>
                                 <option selected value="1">Nike</option>
                                 <option value="2">Adidas</option>
                             }
-                            else if (Model.company.Id == 2) //Adidas
+                            else if (Model.CompanyId == 2)
                             {
                                 <option>Select one</option>
                                 <option value="1">Nike</option>

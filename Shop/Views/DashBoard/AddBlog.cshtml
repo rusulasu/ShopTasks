@@ -12,8 +12,7 @@
         </div>
 
         <div>
-            <form method="post" asp-action="AddBlog" class="row"> 
-
+            <form method="post" asp-action="AddBlog" class="row">
 
                 <div class="mb-3">
                     <label asp-for="Title" class="form-label">Blog Title</label>
@@ -23,8 +22,8 @@
                            asp-for="Title"
                            class="form-control"
                            placeholder="" />
-                </div>
-               
+                </div>   
+            
 
                 <div class="mb-3">
                     <label asp-for="Content" class="form-label">Blog Content</label>
@@ -38,8 +37,8 @@
 
 
                 <div class="mb-3 col-lg-6">
-                    <label asp-for="blog_type.Category" class="form-label">Category</label>
-                    <select class="form-select" asp-for="blog_type.Category" name="" id="">
+                    <label asp-for="blog_type.Id" class="form-label">Category</label> <!--FK Connection-->
+                    <select class="form-select" asp-for="blog_type.Id" name="" id="">
                         <option selected>Select Category</option>
                         <option value="1">Fashion</option>
                         <option value="2">Travel</option>
