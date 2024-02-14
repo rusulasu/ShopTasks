@@ -1,28 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Shop.Data;
 using Shop.Models;
 
 namespace Shop.Controllers
 {
-    public class DashBoardController : Controller
+    public class DashBoardController : Controller // Why this controller "DashBoard"? To use it to display the frequently content
     {
 
-        private static List<Company> _company = new List<Company>();
         private static List<Product> _products = new List<Product>();
         private static List<Blog> _blogs = new List<Blog>();
-        //private static List<BlogType> _Types = new List<BlogType>();
-
-        private readonly ApplicationDbContext _db;
-
-        public DashBoardController(ApplicationDbContext db)
-        {
-            _company.Add(new Company { Id = 1, Name = "Nike" });
-            _company.Add(new Company { Id = 2, Name = "Adidas" });
-            
-            _db = db;
-        } 
 
         public IActionResult Index()
         {
@@ -38,33 +23,42 @@ namespace Shop.Controllers
         [HttpPost]
         public IActionResult AddProduct(Product product)
         {
+            int id;
+            if (_products.Count == 0)
+            {
+                id = 1;
+            }
+            else
+            {
+                id = _products.Max(x => x.Id) + 1;
+            }
+            product.Id = id;
 
-            _db.products.Add(product);
-            _db.SaveChanges();
-
-            return View();
-
+            _products.Add(product);
+            return RedirectToAction("index");
+            // index means the main page for this controller,which is the DashBoard
 
         }
 
         #region GetAll
         public IActionResult GetAllData()
         {
-            var product = _db.products.Include(p => p.company).ToList(); // var cause we return list (ToList())
-            return View(product);
+            return View(_products);
+            //View for what? array
 
+            //Why without loop? 
+            // while the controller provides the data to the view, the actual rendering, including any necessary loops
         }
         #endregion
 
         #region DeleteProduct
 
         public IActionResult Delete(int id)
-        {
+        { // asp-acion of Delete tag
 
-            Product? product = _db.products.SingleOrDefault(x => x.Id == id);
-            _db.products.Remove(product);
-            _db.SaveChanges();
+            Product product = _products.FirstOrDefault(x => x.Id == id);
 
+            _products.Remove(product);
 
             return RedirectToAction("GetAllData");
 
@@ -76,30 +70,36 @@ namespace Shop.Controllers
 
         public IActionResult Edit(int id)
         {
-            Product product = _db.products.SingleOrDefault(x => x.Id == id);
-            return View(product);
+            Product product = _products.FirstOrDefault(x => x.Id == id);
+            return View(product); // To display all product details
+                                  // with this id
+                                  // on the web to see it and edit it
         }
 
         [HttpPost]
         public IActionResult Edit(Product product)
         {
-            Product pd = _db.products.Find(product.Id);
-            if (pd == null)
+            Product pd = _products.SingleOrDefault(c => c.Id == product.Id);
+            //this method used to catch the index of the product that matched 
+            // with the ID to update the info's at the same location
+
+            if (pd != null)
             {
-                return NotFound();
+                pd.Price = product.Price;
+                pd.Quantity = product.Quantity;
+                pd.EnableSize = product.EnableSize;
+                pd.Name = product.Name;
+                pd.Description = product.Description;
+
+                // Check if company is not null before accessing its Id
+                if (pd.company != null)
+                {
+                    pd.company.Id = product.company.Id;
+                }
             }
 
-            pd.Price = product.Price;
-            pd.Quantity = product.Quantity;
-            pd.EnableSize = product.EnableSize;
-            pd.Name = product.Name;
-            pd.Description = product.Description;
-            pd.CompanyId = product.CompanyId;
-
-            _db.SaveChanges();
-            return RedirectToAction("GetAllData");
+            return RedirectToAction("index");
         }
-
 
         #endregion
 
@@ -113,25 +113,29 @@ namespace Shop.Controllers
         [HttpPost]
         public IActionResult AddBlog(Blog blog)
         {
-
-            //_db.blogs.Add(blog);
-            //_db.SaveChanges();
-
-
-            return RedirectToAction("Index");
+            int id;
+            if (_blogs.Count == 0)
+            {
+                id = 1;
+            }
+            else
+            {
+                id = _blogs.Max(x => x.Id) + 1;
+            }
+            blog.Id = id;
+            _blogs.Add(blog);
+            return RedirectToAction("index");
         }
-
 
         #endregion
 
 
         #region ShowAllBlogs
 
-        //public IActionResult ShowAllBlogs()
-        //{
-        //    //var blog = _db.blogs.ToList();
-        //    //return View(blog);
-        //}
+        public IActionResult ShowAllBlogs()
+        {
+            return View(_blogs);
+        }
 
 
         #endregion
@@ -182,5 +186,12 @@ namespace Shop.Controllers
         }
 
         #endregion
+
+
+
+
+
+
+
     }
 }
