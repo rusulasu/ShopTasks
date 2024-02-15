@@ -1,13 +1,28 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Shop.Data;
 using Shop.Models;
 
 namespace Shop.Controllers
 {
-    public class DashBoardController : Controller // Why this controller "DashBoard"? To use it to display the frequently content
+    public class DashBoardController : Controller
     {
 
+        private static List<Company> _company = new List<Company>();
         private static List<Product> _products = new List<Product>();
         private static List<Blog> _blogs = new List<Blog>();
+
+        private readonly ApplicationDbContext _db;
+
+        public DashBoardController(ApplicationDbContext db)
+        {
+            _db = db;
+            _company.Add(new Company { Id = 1, Name = "Nike" });
+            _company.Add(new Company { Id = 2, Name = "Adidas" });
+
+          
+        }
 
         public IActionResult Index()
         {
@@ -23,42 +38,33 @@ namespace Shop.Controllers
         [HttpPost]
         public IActionResult AddProduct(Product product)
         {
-            int id;
-            if (_products.Count == 0)
-            {
-                id = 1;
-            }
-            else
-            {
-                id = _products.Max(x => x.Id) + 1;
-            }
-            product.Id = id;
 
-            _products.Add(product);
-            return RedirectToAction("index");
-            // index means the main page for this controller,which is the DashBoard
+            _db.products.Add(product);
+            _db.SaveChanges();
+
+            return View();
+
 
         }
 
         #region GetAll
         public IActionResult GetAllData()
         {
-            return View(_products);
-            //View for what? array
+            var product = _db.products.Include(p => p.company).ToList(); // var cause we return list (ToList())
+            return View(product);
 
-            //Why without loop? 
-            // while the controller provides the data to the view, the actual rendering, including any necessary loops
         }
         #endregion
 
         #region DeleteProduct
 
         public IActionResult Delete(int id)
-        { // asp-acion of Delete tag
+        {
 
-            Product product = _products.FirstOrDefault(x => x.Id == id);
+            Product? product = _db.products.SingleOrDefault(x => x.Id == id);
+            _db.products.Remove(product);
+            _db.SaveChanges();
 
-            _products.Remove(product);
 
             return RedirectToAction("GetAllData");
 
@@ -70,36 +76,27 @@ namespace Shop.Controllers
 
         public IActionResult Edit(int id)
         {
-            Product product = _products.FirstOrDefault(x => x.Id == id);
-            return View(product); // To display all product details
-                                  // with this id
-                                  // on the web to see it and edit it
+            Product product = _db.products.SingleOrDefault(x => x.Id == id);
+            return View(product);
         }
 
         [HttpPost]
         public IActionResult Edit(Product product)
         {
-            Product pd = _products.SingleOrDefault(c => c.Id == product.Id);
-            //this method used to catch the index of the product that matched 
-            // with the ID to update the info's at the same location
+            Product pd = _db.products.SingleOrDefault(p=>p.Id==product.Id);
 
-            if (pd != null)
-            {
-                pd.Price = product.Price;
-                pd.Quantity = product.Quantity;
-                pd.EnableSize = product.EnableSize;
-                pd.Name = product.Name;
-                pd.Description = product.Description;
+            pd.Price = product.Price;
+            pd.Quantity = product.Quantity;
+            pd.EnableSize = product.EnableSize;
+            pd.Name = product.Name;
+            pd.Description = product.Description;
+            pd.CompanyId = product.CompanyId;
 
-                // Check if company is not null before accessing its Id
-                if (pd.company != null)
-                {
-                    pd.company.Id = product.company.Id;
-                }
-            }
-
-            return RedirectToAction("index");
+            _db.products.Update(pd);
+            _db.SaveChanges();
+            return RedirectToAction("GetAllData");
         }
+
 
         #endregion
 
@@ -113,19 +110,14 @@ namespace Shop.Controllers
         [HttpPost]
         public IActionResult AddBlog(Blog blog)
         {
-            int id;
-            if (_blogs.Count == 0)
-            {
-                id = 1;
-            }
-            else
-            {
-                id = _blogs.Max(x => x.Id) + 1;
-            }
-            blog.Id = id;
-            _blogs.Add(blog);
-            return RedirectToAction("index");
+
+            _db.blogs.Add(blog);
+            _db.SaveChanges();
+
+
+            return RedirectToAction("Index");
         }
+
 
         #endregion
 
@@ -134,7 +126,8 @@ namespace Shop.Controllers
 
         public IActionResult ShowAllBlogs()
         {
-            return View(_blogs);
+            var blog = _db.blogs.Include(p=>p.blog_type).ToList();
+            return View(blog);
         }
 
 
@@ -145,7 +138,7 @@ namespace Shop.Controllers
 
         public IActionResult EditBlog(int id)
         {
-            Blog blog = _blogs.FirstOrDefault(x => x.Id == id);
+            Blog blog = _db.blogs.SingleOrDefault(x => x.Id == id);
             return View(blog);
         }
 
@@ -153,18 +146,14 @@ namespace Shop.Controllers
         [HttpPost]
         public IActionResult EditBlog(Blog blog)
         {
-            Blog bg = _blogs.SingleOrDefault(g => g.Id == blog.Id);
+            Blog bg = _db.blogs.SingleOrDefault(g => g.Id == blog.Id);
 
-            if (bg != null)
-            {
-                bg.Title = blog.Title;
-                bg.Content = blog.Content;
-
-                if (bg.blog_type != null)
-                {
-                    bg.blog_type.Category = blog.blog_type.Category;
-                }
-            }
+            bg.Title = blog.Title;
+            bg.Content = blog.Content;
+            bg.TypeId = blog.TypeId;
+                
+            _db.blogs.Update(bg);
+            _db.SaveChanges();
 
             return RedirectToAction("ShowAllBlogs");
         }
@@ -178,20 +167,14 @@ namespace Shop.Controllers
 
         public IActionResult DeleteBlog(int id)
         {
-            Blog blog = _blogs.FirstOrDefault(x => x.Id == id);
+            Blog? blog = _db.blogs.SingleOrDefault(x => x.Id == id);
 
-            _blogs.Remove(blog);
+            _db.blogs.Remove(blog);
+            _db.SaveChanges();
 
             return RedirectToAction("ShowAllBlogs");
         }
 
         #endregion
-
-
-
-
-
-
-
     }
 }

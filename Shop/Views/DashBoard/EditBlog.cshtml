@@ -40,11 +40,11 @@
 
 
                 <div class="mb-3 col-lg-6">
-                    <label asp-for="blog_type.Category" class="form-label">Category</label>
-                    <select class="form-select" asp-for="blog_type.Category">
+                    <label asp-for="TypeId" class="form-label">Category</label>
+                    <select class="form-select" asp-for="TypeId">
 
                       
-                                @if (Model.blog_type != null && Model.blog_type.Category == "1")
+                                @if (Model.TypeId == 1)
                                 {
                                     <option selected value="1">Fashion</option>
                                     <option value="2">Travel</option>
@@ -53,7 +53,7 @@
                                     <option value="5">Sport</option>
                                     <option value="6">Comedy</option>
                                 }
-                                else if (Model.blog_type != null && Model.blog_type.Category == "2")
+                                else if (Model.TypeId == 2)
                                 {
                                     <option value="1">Fashion</option>
                                     <option selected value="2">Travel</option>
@@ -62,13 +62,13 @@
                                     <option value="5">Sport</option>
                                     <option value="6">Comedy</option>
                                 }
-                                else if (Model.blog_type != null && Model.blog_type.Category == "3")
+                                else if (Model.TypeId == 3)
                                 {
                                     <option value="1">Fashion</option>
                                     <option value="2">Travel</option>
                                     <option selected value="3">Food</option>
                                 }
-                                else if (Model.blog_type != null && Model.blog_type.Category == "4")
+                                else if (Model.TypeId == 4)
                                 {
                                     <option value="1">Fashion</option>
                                     <option value="2">Travel</option>
@@ -77,7 +77,7 @@
                                     <option value="5">Sport</option>
                                     <option value="6">Comedy</option>
                                 }
-                                else if (Model.blog_type != null && Model.blog_type.Category == "5")
+                                else if (Model.TypeId == 5)
                                 {
                                     <option value="1">Fashion</option>
                                     <option value="2">Travel</option>
@@ -86,7 +86,7 @@
                                     <option selected value="5">Sport</option>
                                     <option value="6">Comedy</option>
                                 }
-                                else if (Model.blog_type != null && Model.blog_type.Category == "6")
+                                else if (Model.TypeId == 6)
                                 {
                                     <option value="1">Fashion</option>
                                     <option value="2">Travel</option>

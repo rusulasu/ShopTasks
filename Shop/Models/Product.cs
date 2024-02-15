@@ -1,8 +1,13 @@
-﻿namespace Shop.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Shop.Models
 {
     public class Product
     {
-        public int Id { get; set; }     
+        [Key]
+        public int Id { get; set; }
+        [Required]
         public string Name { get; set; }    
         public string Description { get; set; } 
         public float Price { get; set; }
@@ -11,6 +16,8 @@
 
         public Boolean EnableSize { get; set; }
 
+        public int CompanyId {  get; set; }
+        [ForeignKey("CompanyId")]
         public Company company { get; set; }
     }
 }
