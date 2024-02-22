@@ -26,7 +26,9 @@ namespace Shop.Controllers
 
         public IActionResult Index()
         {
+
             return View();
+
         }
 
         public IActionResult AddProduct()
@@ -38,11 +40,15 @@ namespace Shop.Controllers
         [HttpPost]
         public IActionResult AddProduct(Product product)
         {
+            if(!ModelState.IsValid) // Check if all validaions are applied
+            {
+                return View(product); // Stay on the same page , no changes
 
+            }
             _db.products.Add(product);
             _db.SaveChanges();
 
-            return View();
+            return View("Index");
 
 
         }
@@ -76,6 +82,7 @@ namespace Shop.Controllers
 
         public IActionResult Edit(int id)
         {
+           
             Product product = _db.products.SingleOrDefault(x => x.Id == id);
             return View(product);
         }
@@ -83,6 +90,12 @@ namespace Shop.Controllers
         [HttpPost]
         public IActionResult Edit(Product product)
         {
+
+            if(!ModelState.IsValid)
+            {
+                return View(product);
+            }
+
             Product pd = _db.products.SingleOrDefault(p=>p.Id==product.Id);
 
             pd.Price = product.Price;
@@ -111,6 +124,10 @@ namespace Shop.Controllers
         public IActionResult AddBlog(Blog blog)
         {
 
+            if(!ModelState.IsValid)
+            {
+                return View(blog);
+            }
             _db.blogs.Add(blog);
             _db.SaveChanges();
 
@@ -146,6 +163,12 @@ namespace Shop.Controllers
         [HttpPost]
         public IActionResult EditBlog(Blog blog)
         {
+
+            if (!ModelState.IsValid)
+            {
+                return View(blog);
+            }
+
             Blog bg = _db.blogs.SingleOrDefault(g => g.Id == blog.Id);
 
             bg.Title = blog.Title;

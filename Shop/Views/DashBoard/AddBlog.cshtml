@@ -13,7 +13,7 @@
 
         <div>
             <form method="post" asp-action="AddBlog" class="row"> 
-
+                <div asp-validation-summary="All"></div>
 
                 <div class="mb-3">
                     <label asp-for="Title" class="form-label">Blog Title</label>
@@ -22,7 +22,10 @@
                            id="Title"
                            asp-for="Title"
                            class="form-control"
-                           placeholder="" />
+                           placeholder="">
+
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                         
                 </div>
                
 
@@ -33,14 +36,16 @@
                               id="Content"
                               asp-for="Content"
                               class="form-control"
-                              placeholder=""></textarea>
+                              placeholder="">
+                    </textarea>
+                    <span asp-validation-for="Content" class="text-danger"></span>
                 </div>
 
 
                 <div class="mb-3 col-lg-6">
                     <label asp-for="TypeId" class="form-label">Category</label>
                     <select class="form-select" asp-for="TypeId" name="TypeId" id="TypeId">
-                        <option selected>Select Category</option>
+                        <option value="0" selected>Select Category</option>
                         <option value="1">Fashion</option>
                         <option value="2">Travel</option>
                         <option value="3">Food</option>
@@ -48,6 +53,8 @@
                         <option value="5">Sport</option>
                         <option value="6">Comedy</option>
                     </select>
+
+                    <span asp-validation-for="TypeId" class="text-danger"></span>
                 </div>
 
                 <div class="col-lg-12 d-flex justify-content-center">
